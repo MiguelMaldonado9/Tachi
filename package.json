@@ -1,0 +1,11 @@
+{
+  "name": "tachi",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Tachi mobility platform monorepo",
+  "scripts": {
+    "dev": "pnpm --parallel dev",
+    "lint": "pnpm --recursive lint",
+    "test": "pnpm --recursive test"
+  }
+}
