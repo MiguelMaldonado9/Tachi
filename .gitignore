@@ -1,0 +1,20 @@
+# Node
+node_modules/
+.env
+
+# Flutter
+.dart_tool/
+build/
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Logs
+logs/
+*.log
+
+# Dependencias
+package-lock.json
