@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "description": "Tachi mobility platform monorepo",
+  "packageManager": "pnpm@11.13.0",
   "scripts": {
-    "dev": "pnpm --parallel dev",
+    "dev": "pnpm --parallel --filter './apps/*' --filter backend dev",
     "lint": "pnpm --recursive lint",
-    "test": "pnpm --recursive test"
+    "test": "pnpm --recursive test",
+    "format": "pnpm exec prettier --write ."
   }
 }
