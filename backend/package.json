@@ -1,0 +1,22 @@
+{
+    "name": "@tachi/backend",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "tsx watch src/index.ts",
+        "build": "tsc -p tsconfig.json",
+        "start": "node dist/index.js"
+    },
+    "dependencies": {
+        "@fastify/cors": "^11.3.0",
+        "@fastify/env": "^7.0.0",
+        "@fastify/helmet": "^13.1.0",
+        "fastify": "^5.10.0"
+    },
+    "devDependencies": {
+        "@types/node": "^26.1.1",
+        "tsx": "^4.23.1",
+        "typescript": "^7.0.2"
+    }
+}
