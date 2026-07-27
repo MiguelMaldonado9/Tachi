@@ -15,6 +15,7 @@
         "@fastify/helmet": "^13.1.0",
         "@supabase/supabase-js": "^2.110.8",
         "@tachi/shared-events": "workspace:*",
+        "dotenv": "^17.4.2",
         "fastify": "^5.10.0",
         "pino": "^10.3.1",
         "zod": "^4.4.3"
