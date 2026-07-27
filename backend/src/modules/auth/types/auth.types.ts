@@ -1,12 +1,14 @@
 export enum UserRole {
-  USER = "USER",
+  PASSENGER = "PASSENGER",
   DRIVER = "DRIVER",
   ADMIN = "ADMIN",
   SUPERVISOR = "SUPERVISOR",
 }
 
 export enum UserStatus {
+  PENDING = "PENDING",
   ACTIVE = "ACTIVE",
+  SUSPENDED = "SUSPENDED",
   INACTIVE = "INACTIVE",
   BLOCKED = "BLOCKED",
 }

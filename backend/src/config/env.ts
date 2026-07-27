@@ -5,14 +5,13 @@ const envSchema = z.object({
     .enum(["development", "test", "production"])
     .default("development"),
 
-  PORT: z
-    .string()
-    .default("3000")
-    .transform(Number),
+  PORT: z.coerce.number().default(3000),
 
-  SUPABASE_URL: z.string().optional(),
+  SUPABASE_URL: z.url(),
 
-  SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
+  SUPABASE_PUBLISHABLE_KEY: z.string().min(1),
+
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
 });
 
 export const env = envSchema.parse(process.env);
