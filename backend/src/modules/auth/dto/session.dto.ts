@@ -1,9 +1,9 @@
-import { AuthUserDto } from "./auth-user.dto.js";
+export interface SessionDTO {
 
-export interface SessionDto {
-  user: AuthUserDto;
+  accessToken: string;
 
-  accessToken?: string;
+  refreshToken: string;
 
-  refreshToken?: string;
+  expiresIn: number;
+
 }

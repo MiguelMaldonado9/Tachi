@@ -1,6 +1,6 @@
 import type { User } from "@supabase/supabase-js";
 
-import type { AuthUserDto } from "../dto/auth-user.dto.js";
+import type { AuthUserDto } from "../../users/dto/user.dto.js";
 
 import { 
     UserStatus

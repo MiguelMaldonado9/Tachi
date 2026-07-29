@@ -19,15 +19,3 @@ export enum DriverStatus {
   REJECTED = "REJECTED",
   SUSPENDED = "SUSPENDED",
 }
-
-export interface CurrentUser {
-  id: string;
-
-  authId: string;
-
-  email: string;
-
-  roles: UserRole[];
-
-  status: UserStatus;
-}

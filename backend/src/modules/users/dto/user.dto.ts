@@ -1,6 +1,10 @@
-import { UserRole, UserStatus } from "../types/auth.types.js";
+import {
+  UserRole,
+  UserStatus,
+} from "../../auth/types/auth.types.js";
 
-export interface AuthUserDto {
+export interface UserDTO {
+
   id: string;
 
   authId: string;
@@ -16,4 +20,5 @@ export interface AuthUserDto {
   roles: UserRole[];
 
   status: UserStatus;
+
 }

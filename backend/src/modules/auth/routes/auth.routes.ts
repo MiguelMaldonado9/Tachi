@@ -12,4 +12,9 @@ export async function authRoutes(
     "/register",
     controller.register.bind(controller),
   );
+
+  app.post(
+    "/login",
+    controller.login.bind(controller),
+  );
 }

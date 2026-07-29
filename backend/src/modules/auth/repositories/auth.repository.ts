@@ -1,74 +1,39 @@
-import { supabase } from "../../../lib/supabase/index.js";
-import { AuthMapper } from "../mappers/auth.mapper.js";
+import { supabase } 
+  from "../../../lib/supabase/index.js";
+
 import {
   ConflictError,
   InternalServerError,
+  UnauthorizedError,
 } from "../../../shared/errors/index.js";
 
-import type { AuthUserDto } from "../dto/auth-user.dto.js";
-import type { RegisterDTO } from "../dto/register.dto.js";
+import type { UserDTO }
+  from "../../users/dto/user.dto.js";
 
-import { UserStatus } from "../types/auth.types.js";
+import type { RegisterDTO } 
+  from "../dto/register.dto.js";
+
+import type { LoginDTO } 
+  from "../dto/login.dto.js";
+
+import type { LoginResponseDTO } 
+  from "../dto/login-response.dto.js";
+
+import { UserStatus } 
+  from "../types/auth.types.js";
+
+import { UserRepository }
+  from "../../users/repositories/user.repository.js";
 
 export class AuthRepository {
 
-  async findByAuthId(
-    authId: string,
-  ): Promise<AuthUserDto | null> {
+  private readonly userRepository =
+    new UserRepository();
 
-    return this.getUserById(authId);
-
-  }
-
-  async findByEmail(
-    email: string,
-  ): Promise<AuthUserDto | null> {
-
-    const { data, error } =
-      await supabase.admin
-        .from("users")
-        .select(`
-          id,
-          email,
-          full_name,
-          phone,
-          photo_url,
-          status
-        `)
-        .eq("email", email)
-        .maybeSingle();
-
-    if (error || !data) {
-
-      return null;
-
-    }
-
-    return {
-
-      id: data.id,
-
-      authId: data.id,
-
-      name: data.full_name,
-
-      email: data.email,
-
-      phone: data.phone,
-
-      photoUrl: data.photo_url,
-
-      roles: [],
-
-      status: data.status as UserStatus,
-
-    };
-
-  }
 
   async createUser(
     data: RegisterDTO,
-  ): Promise<AuthUserDto> {
+  ): Promise<UserDTO> {
 
     const {
       data: authUser,
@@ -112,7 +77,7 @@ export class AuthRepository {
     }
 
     const user =
-      await this.getUserById(
+      await this.userRepository.findById(
         authUser.user.id,
       );
 
@@ -128,47 +93,65 @@ export class AuthRepository {
 
   }
 
-  private async getUserById(
-    id: string,
-  ): Promise<AuthUserDto | null> {
 
-    const { data, error } =
-      await supabase.admin
-        .from("users")
-        .select(`
-          id,
-          email,
-          full_name,
-          phone,
-          photo_url,
-          status
-        `)
-        .eq("id", id)
-        .maybeSingle();
+  async login(
+    data: LoginDTO,
+  ): Promise<LoginResponseDTO> {
 
-    if (error || !data) {
+    const {
+      data: sessionData,
+      error,
+    } =
+      await supabase.client.auth.signInWithPassword({
 
-      return null;
+        email: data.email,
+
+        password: data.password,
+
+      });
+
+    if (
+      error ||
+      !sessionData.user ||
+      !sessionData.session
+    ) {
+
+      throw new UnauthorizedError(
+        "Correo o contraseña incorrectos.",
+        "INVALID_CREDENTIALS",
+      );
+
+    }
+
+    const user =
+      await this.userRepository.findById(
+        sessionData.user.id,
+      );
+
+    if (!user) {
+
+      throw new InternalServerError(
+        "Usuario no encontrado después del login.",
+      );
 
     }
 
     return {
 
-      id: data.id,
+      user,
 
-      authId: data.id,
+      session: {
 
-      name: data.full_name,
+        accessToken:
+          sessionData.session.access_token,
 
-      email: data.email,
+        refreshToken:
+          sessionData.session.refresh_token,
 
-      phone: data.phone,
+        expiresIn:
+          sessionData.session.expires_in,
 
-      photoUrl: data.photo_url,
-
-      roles: [],
-
-      status: data.status as UserStatus,
+      },
 
     };
 

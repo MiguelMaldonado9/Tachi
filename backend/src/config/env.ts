@@ -7,11 +7,13 @@ const envSchema = z.object({
 
   PORT: z.coerce.number().default(3000),
 
-  SUPABASE_URL: z.url(),
+  SUPABASE_URL: z.string().url(),
 
   SUPABASE_PUBLISHABLE_KEY: z.string().min(1),
 
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+
+  SUPABASE_JWT_ISSUER: z.string().url(),
 });
 
 export const env = envSchema.parse(process.env);
