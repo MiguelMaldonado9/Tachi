@@ -41,7 +41,7 @@ export async function authenticate(
   }
 
   const token =
-    authorization.substring(7);
+    authorization.slice(7);
 
   request.user =
     await jwtVerifier.verify(

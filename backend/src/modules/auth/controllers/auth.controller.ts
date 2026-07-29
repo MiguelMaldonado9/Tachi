@@ -42,4 +42,22 @@ export class AuthController {
         data: result,
       });
   }
+
+  async me(
+    request: FastifyRequest,
+    reply: FastifyReply,
+  ) {
+
+    const result =
+      await this.authService.getCurrentUser(
+        request.user!.id,
+      );
+
+    return reply
+      .status(200)
+      .send({
+        success: true,
+        data: result,
+      });
+  }
 }
