@@ -8,6 +8,9 @@ import { FastifyInstance } from "fastify";
 // Enrutador modular para el módulo de Autenticación
 import { authRoutes } from "../modules/auth/index.js"; 
 
+// Enrutador modular para el módulo de Usuarios
+import { userRoutes } from "../modules/users/index.js";
+
 // ==========================================
 // REGISTRO DE RUTAS DEL SISTEMA
 // ==========================================
@@ -38,5 +41,12 @@ export async function registerRoutes(app: FastifyInstance) {
   // Ejemplo: si authRoutes tiene un endpoint "/login", la ruta final será "/auth/login"
   await app.register(authRoutes, {
     prefix: "/auth",
+  });
+
+  // 3. Registro del Módulo de Usuarios
+  // Agrupa todas las rutas de users (register, login, etc.) bajo el prefijo "/users"
+  // Ejemplo: si userRoutes tiene un endpoint "/register", la ruta final será "/users/register"
+  await app.register(userRoutes, {
+    prefix: "/users",
   });
 }

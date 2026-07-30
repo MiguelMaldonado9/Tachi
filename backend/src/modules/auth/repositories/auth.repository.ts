@@ -49,6 +49,67 @@ export class AuthRepository {
    * @throws {InternalServerError} Si ocurre un error inesperado de red o de base de datos.
    * @returns {Promise<UserDTO>} El perfil de usuario verificado y creado.
    */
+
+  /**
+   * Cambia la contraseña de un usuario autenticado.
+   *
+   * Primero verifica que la contraseña actual sea correcta
+   * iniciando sesión con las credenciales actuales.
+   * Si la validación es exitosa, actualiza la contraseña
+   * utilizando el cliente administrador de Supabase.
+   */
+  async changePassword(
+    email: string,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<void> {
+
+    // 1. Verificar la contraseña actual
+    const { data, error } =
+      await supabase.client.auth.signInWithPassword({
+
+        email,
+
+        password: currentPassword,
+
+      });
+
+    if (
+      error ||
+      !data.user
+    ) {
+
+      throw new UnauthorizedError(
+        "La contraseña actual es incorrecta.",
+        "INVALID_PASSWORD",
+      );
+
+    }
+
+    // 2. Actualizar la contraseña
+    const { error: updateError } =
+      await supabase.admin.auth.admin.updateUserById(
+
+        data.user.id,
+
+        {
+
+          password: newPassword,
+
+        },
+
+      );
+
+    if (updateError) {
+
+      throw new InternalServerError(
+        updateError.message,
+      );
+
+    }
+
+  }
+  
   async createUser(data: RegisterDTO): Promise<UserDTO> {
     // 1. Registra el usuario usando el cliente de administración para saltar flujos de confirmación manuales
     const { data: authUser, error } = await supabase.admin.auth.admin.createUser({

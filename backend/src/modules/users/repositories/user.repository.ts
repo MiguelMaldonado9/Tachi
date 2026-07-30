@@ -14,6 +14,10 @@ import type { UserDTO } from "../dto/user.dto.js";
 // Enumerador de estados de usuario definidos en el módulo de autenticación
 import { UserStatus } from "../../auth/types/auth.types.js"; 
 
+// Contrato de transferencia de datos para actualización de perfiles
+import type { UpdateProfileDTO }
+  from "../dto/update-profile.dto.js";
+
 // ==========================================
 // CONFIGURACIÓN DE CONSULTAS Y TIPADOS LOCALES
 // ==========================================
@@ -156,6 +160,45 @@ export class UserRepository {
 
     return (count ?? 0) > 0;
   }
+
+  /**
+   * Actualiza la Información del Perfil de un Usuario
+   * 
+   * Modifica las columnas editables de la tabla 'users' (nombre, teléfono y URL de la foto)
+   * utilizando los permisos administrativos (.admin) para aplicar los cambios basados en su ID único.
+   * 
+   * @param {string} id - Identificador único del usuario a modificar (UUID).
+   * @param {UpdateProfileDTO} data - Objeto de transferencia con los nuevos datos limpios y validados.
+   * @throws {InternalServerError} Si ocurre un error inesperado durante la transacción en Supabase.
+   * @returns {Promise<UserDTO>} El perfil del usuario actualizado con su nueva estructura completa.
+   */
+  async updateProfile(
+    id: string,
+    data: UpdateProfileDTO,
+  ): Promise<UserDTO> {
+    // 1. Ejecuta la operación UPDATE en Supabase mapeando las propiedades camelCase a snake_case de la BD
+    const { data: user, error } = await supabase.admin
+      .from("users")
+      .update({
+        full_name: data.name,
+        phone: data.phone,
+        photo_url: data.photoUrl,
+      })
+      .eq("id", id)           // Cláusula de coincidencia: actualiza únicamente el registro con este ID
+      .select(USER_SELECT)   // Solicita que retorne de inmediato los campos limpios configurados en la constante USER_SELECT [2026-07-29]
+      .single();             // Fuerza a que la respuesta devuelva un solo objeto en lugar de un arreglo
+
+    // 2. Control de errores físicos devueltos por el motor de base de datos
+    if (error) {
+      throw new InternalServerError(
+        error.message,
+      );
+    }
+
+    // 3. Pasa la fila cruda por el traductor 'mapUser' para retornar el contrato oficial UserDTO [2026-07-29]
+    return this.mapUser(user);
+  }
+
 
   /**
    * Adaptador de Formatos (Traductor Interno)
